@@ -1,0 +1,22 @@
+// Task3 - TMR 3:1 (4k / 12k) - higher absolute R
+-MemCellType: MRAM
+-CellArea (F^2): 54
+-CellAspectRatio: 2.0
+-ResistanceOn (ohm): 4000
+-ResistanceOff (ohm): 12000
+-ReadMode: current
+-ReadCurrent (uA): 40
+-ReadVoltage (V): 0.25
+-MinSenseVoltage (mV): 25
+-ReadPower (uW): 145
+-ResetMode: current
+-ResetCurrent (uA): 200
+-ResetPulse (ns): 10
+-ResetEnergy (pJ): 1
+-SetMode: current
+-SetCurrent (uA): 200
+-SetPulse (ns): 10
+-SetEnergy (pJ): 1
+-AccessType: CMOS
+-VoltageDropAccessDevice (V): 0.15
+-AccessCMOSWidth (F): 6

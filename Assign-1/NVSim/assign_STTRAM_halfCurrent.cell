@@ -1,0 +1,22 @@
+// Task4 - Halved write current 100uA (keep same R)
+-MemCellType: MRAM
+-CellArea (F^2): 54
+-CellAspectRatio: 2.0
+-ResistanceOn (ohm): 3000
+-ResistanceOff (ohm): 6000
+-ReadMode: current
+-ReadCurrent (uA): 40
+-ReadVoltage (V): 0.25
+-MinSenseVoltage (mV): 25
+-ReadPower (uW): 145
+-ResetMode: current
+-ResetCurrent (uA): 100
+-ResetPulse (ns): 10
+-ResetEnergy (pJ): 1
+-SetMode: current
+-SetCurrent (uA): 100
+-SetPulse (ns): 10
+-SetEnergy (pJ): 1
+-AccessType: CMOS
+-VoltageDropAccessDevice (V): 0.15
+-AccessCMOSWidth (F): 6

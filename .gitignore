@@ -1,0 +1,40 @@
+# Local agent/environment metadata
+.agents/
+.codex/
+cmake-3.30.3-linux-x86_64/
+
+# Python environments, caches, and generated metadata
+**/.venv*/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Simulator and C/C++ build artifacts
+**/build/
+**/obj_opt/
+*.o
+*.a
+*.so
+*.d
+
+# Known compiled simulator/benchmark binaries
+Assign-1/NVSim/nvsim
+Assign-1/cacti/cacti
+Assign-1/cacti/code_cacti/cacti
+Assign-1/gapbs/bfs
+Assign-1/gapbs/sssp
+Assign-1/gem5/tests/test-progs/**/bin/
+
+# LaTeX and other generated report scratch files
+**/*.aux
+**/*.fdb_latexmk
+**/*.fls
+**/*.log
+Assign_1-Report.out
+Assign-1/Report/*.out
+
+# Editor and OS temporary files
+**/*~
+**/*.swp
+**/*.swo
+**/.DS_Store
