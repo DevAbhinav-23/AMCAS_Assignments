@@ -1,0 +1,40 @@
+# Build outputs (regenerate locally)
+gem5/build/
+cacti/obj_opt/
+cacti/cacti
+cacti/code_cacti/cacti
+NVSim/*.o
+NVSim/nvsim
+.venv-gem5/
+
+# LaTeX intermediates (scoped: *.cfg.out are CACTI results, keep them)
+Report/*.aux
+Report/*.fdb_latexmk
+Report/*.fls
+Report/*.log
+Report/*.out
+Report/*.synctex.gz
+code_ngspice/*.aux
+code_ngspice/*.fdb_latexmk
+code_ngspice/*.fls
+code_ngspice/*.log
+*.pyc
+__pycache__/
+
+# Vendored upstream tool sources (reproduce via Setup & References links).
+# Contents-ignored (not the dir) so our files below can be re-included.
+gem5/
+DRAMsim3/
+gapbs/
+cacti/*
+!cacti/code_cacti/
+NVSim/*
+!NVSim/*.cfg
+!NVSim/*.cell
+ramulator2/*
+!ramulator2/plots/
+!ramulator2/plots_data/
+!ramulator2/part_d_runner.py
+!ramulator2/part_d_t4_sensitivity.py
+!ramulator2/l2miss_converted.trace
+!ramulator2/l2miss_ldst.trace

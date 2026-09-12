@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{float}
+\usepackage{graphicx}
 \usepackage{tabularx}
 \usepackage{xcolor}
 \usepackage{enumitem}
@@ -80,6 +81,12 @@ The bitline differential $\Delta V(BL,BLB)$ measured at $t=2$\,ns is 729.86\,mV,
 
 Widening the access transistors from the nominal width to 0.24\,$\mu$m strengthens the path between the bitline and the internal storage node. This has two effects: (i)~the bitline differential increases to 852.34\,mV because the wider device discharges BL faster, and (ii)~the stored-node disturbance $q_{\max}$ rises from 205.52\,mV to 271.22\,mV -- a 31.9\% increase -- because more current flows into the ``0'' storage node during the read, pushing it closer to the inverter trip point. Although the cell still survives at nominal PVT, the enlarged disturb erodes the static noise margin (SNM). At worst-case process corners (slow NMOS, fast PMOS) or elevated temperature, this reduced margin could cause a destructive read, flipping the stored bit. The trade-off is fundamental: wider access devices improve sensing speed and bitline swing but degrade read stability. SRAM designers resolve this tension through careful cell ratio ($\beta$-ratio) tuning, where the pull-down device must always be stronger than the access device.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../code_ngspice/Task-2_vq.png}
+\caption{Part A Task 2 -- read disturb $v(Q)$: nominal peaks at 205.5\,mV, widened access at 271.2\,mV, 85\,$^\circ$C at 220.8\,mV.}
+\end{figure}
+
 \subsection*{Task 3: Supply Sweep}
 
 Sweeping $V_{DD}$ from 1.1\,V down to 0.4\,V reveals that $\Delta V$ decreases monotonically with supply voltage. The 25\,mV sense-amplifier offset threshold is crossed at approximately 0.448\,V (obtained by linear interpolation between the 0.45\,V and 0.40\,V data points). Within the requested 1.1--0.6\,V window, the minimum $\Delta V$ is 143.9\,mV (at 0.6\,V), which remains ${\sim}5.8\times$ above the offset threshold, so the read works safely across this entire range. The monotonic decline occurs because lower $V_{DD}$ reduces the overdrive voltage on both the access and pull-down transistors, weakening the current that develops the bitline differential. The near-linear relationship between $\Delta V$ and $V_{DD}$ in the mid-range reflects the fact that both transistor stacks scale roughly proportionally with supply.
@@ -101,6 +108,12 @@ $\Delta V$ (mV) & 53.6 & 25.7 & 10.7 & & & \\
 \end{tabularx}
 \caption{Part A Task 3 -- supply sweep. Linear interpolation between 0.45\,V and 0.40\,V gives the 25\,mV crossing near 0.448\,V.}
 \end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../code_ngspice/Task-3_dv_vs_vdd.png}
+\caption{Part A Task 3 -- $\Delta V$ at 2\,ns vs.\ $V_{DD}$ with 25\,mV sense-amp offset; crossing near 0.448\,V, safe across 1.1--0.6\,V.}
+\end{figure}
 
 \subsection*{Task 4: Temperature Sensitivity}
 
@@ -128,6 +141,7 @@ Area & 11.4742\,mm$^2$ & Bitline hand-check & 0.4069 vs 18.7\,ns \\
 \bottomrule
 \end{tabularx}
 \caption{Part B baseline CACTI result and related reference values.}
+\label{tab:partB}
 \end{table}
 
 \subsection*{Task 1: Baseline Organization}
@@ -154,6 +168,12 @@ CACTI reports a 2\,MB SRAM L2 cache at 45\,nm with the following baseline metric
 \end{tabularx}
 \caption{Part B Task 2 -- capacity sweep. All metrics grow with capacity, but at different rates.}
 \end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../cacti/code_cacti/Task-2_capacity.png}
+\caption{Part B Task 2 -- access time vs.\ $\log_2$(capacity); linear to 2\,MB, super-linear after (H-tree RC dominates).}
+\end{figure}
 
 Access time rises from 2.417\,ns at 256\,kB to 6.362\,ns at 16\,MB -- a $2.63\times$ increase for a $64\times$ capacity growth. The ``one gate delay per capacity doubling'' heuristic holds only loosely: doubling from 2\,MB to 4\,MB adds 21.7\% to access time, while doubling from 4\,MB to 8\,MB adds 26.7\%. The super-linear growth at larger capacities occurs because wire delay (which scales with physical distance, not transistor count) and H-tree routing overhead become the dominant latency components. Leakage power scales almost linearly with capacity because each additional bitcell contributes a roughly constant subthreshold current. Area scaling is also near-linear, though peripheral circuits introduce a sub-linear component at smaller sizes.
 
@@ -191,22 +211,24 @@ CACTI reports a bitline delay component of 0.4069\,ns. The lecture RC formula ($
 \small
 \begin{tabularx}{\textwidth}{X >{\centering\arraybackslash}p{2.4cm} >{\centering\arraybackslash}p{2.4cm} >{\centering\arraybackslash}p{1.6cm}}
 \toprule
-\textbf{Metric} & \textbf{SRAM} & \textbf{STT-MRAM} & \textbf{Ratio} \\
+\textbf{Metric} & \textbf{SRAM (CACTI)} & \textbf{STT-MRAM (NVSim)} & \textbf{Ratio} \\
 \midrule
-Area                & 6.393\,mm$^2$ & 3.590\,mm$^2$  & $0.56\times$ \\
-Read hit latency    & 0.850\,ns     & 1.591\,ns       & $1.87\times$ \\
-Write latency       & 0.520\,ns     & 10.608\,ns      & $20.4\times$ \\
-Read energy         & 0.575\,nJ     & 0.763\,nJ       & $1.33\times$ \\
-Write energy        & 0.531\,nJ     & 0.435\,nJ       & $0.82\times$ \\
-Leakage power       & 3196\,mW      & 425\,mW         & $0.13\times$ \\
+Area                & 11.474\,mm$^2$ & 3.590\,mm$^2$  & $0.31\times$ ($-68.7\%$) \\
+Read hit latency    & 2.902\,ns      & 1.591\,ns      & $0.55\times$ \\
+Write latency       & 2.902\,ns      & 10.608\,ns     & $3.66\times$ \\
+Read energy         & 0.793\,nJ      & 0.763\,nJ      & $0.96\times$ \\
+Write energy        & 0.851\,nJ      & 0.435\,nJ      & $0.51\times$ \\
+Leakage power       & 562.6\,mW$^\dagger$ & 425\,mW     & $0.76\times$ \\
 \bottomrule
 \end{tabularx}
-\caption{Part C Task 1 -- SRAM vs.\ STT-MRAM at 2\,MB, 45\,nm.}
+\caption{Part C Task 1 -- SRAM (CACTI 7, ED$^2$) vs.\ STT-MRAM (NVSim) at 2\,MB, 45\,nm. $^\dagger$CACTI per-UCA value as reported; NVSim total. For NVSim-only SRAM (6.393\,mm$^2$, 0.85/0.52\,ns) ratio is $0.56\times$/$1.87\times$/$20.4\times$.}
 \end{table}
 
 \subsection*{Task 1: SRAM--STT-MRAM Comparison}
 
-STT-MRAM achieves $0.56\times$ the area and $0.13\times$ the leakage power of SRAM, but at the cost of $1.87\times$ read latency and $20.4\times$ write latency. The area advantage stems from the 1T-1MTJ bitcell, which occupies roughly 6--8\,F$^2$ compared to SRAM's ${\sim}120$--150\,F$^2$ for a 6T cell. The massive leakage reduction occurs because the MTJ stores data as a magnetic orientation rather than as charge on a cross-coupled latch -- there are no continuously biased transistors holding state. The read-latency penalty arises because sensing the resistance difference between parallel and anti-parallel MTJ states requires a current-mode sense amplifier with a longer integration time than the voltage-mode sensing in SRAM. The write-latency penalty is even more severe because STT switching requires injecting a spin-polarized current pulse of sufficient magnitude and duration to flip the free-layer magnetization; the thermal stability factor ($\Delta$) sets a minimum pulse width to ensure a low write-error rate.
+Compared against the CACTI baseline (Table~\ref{tab:partB}), STT-MRAM delivers a $0.31\times$ area footprint and $0.76\times$ leakage power at 2\,MB, with a $0.55\times$ faster read access latency (1.591\,ns vs.\ 2.902\,ns). The write-latency penalty is severe, however: 10.608\,ns vs.\ 2.902\,ns ($3.66\times$). Dynamic read energy is comparable (0.763\,nJ vs.\ 0.793\,nJ) while dynamic write energy drops to $0.51\times$ (0.435\,nJ vs.\ 0.851\,nJ). Note that NVSim's own internal SRAM model (6.393\,mm$^2$, 0.850\,ns read, 0.520\,ns write, 0.575\,nJ read energy, 0.531\,nJ write energy, 3196\,mW leakage) gives a device-level baseline that is more favorable to SRAM; against that reference the STT-MRAM ratios are $0.56\times$ area, $1.87\times$ read latency, $20.4\times$ write latency, $1.33\times$ read energy, and $0.82\times$ write energy.
+
+The area advantage stems from the 1T-1MTJ bitcell, which occupies roughly 54\,F$^2$ compared to SRAM's 146\,F$^2$ (NVSim models). The massive leakage reduction occurs because the MTJ stores data as a magnetic orientation rather than as charge on a cross-coupled latch -- there are no continuously biased transistors holding state. The read-latency advantage (against CACTI) is partly an artifact of NVSim's faster peripheral model; the sense-amp integration time for current-mode MRAM sensing is genuinely longer than voltage-mode SRAM sensing. The write-latency penalty is real and severe because STT switching requires injecting a spin-polarized current pulse of sufficient magnitude and duration (10\,ns write pulse) to overcome the MTJ thermal stability and flip the free-layer magnetization.
 
 \subsection*{Task 2: Strengths and Weaknesses}
 
@@ -224,10 +246,10 @@ TMR high          & 3.580 & 1.596 & 10.657 & 0.761 & 0.433 &  425.2 \\
 Half reset current & 3.590 & 1.571 & 10.588 & 0.762 & 0.433 &  425.0 \\
 \bottomrule
 \end{tabularx}
-\caption{Part C Tasks 1, 3, and 4 -- NVSim variants. E denotes dynamic access energy.}
+\caption{Part C Tasks 2, 3, and 4 -- NVSim variants at 2\,MB, 45\,nm. E denotes dynamic access energy.}
 \end{table}
 
-The worst metrics for STT-MRAM are read and write latency; the best are area and leakage. At the device level, this is a direct consequence of the storage mechanism: SRAM stores data as charge on bistable inverters that can be read and written at transistor speeds, while STT-MRAM relies on spin-transfer torque to manipulate a magnetic tunnel junction. The current-mode sensing path for MRAM is inherently slower than voltage-mode sensing because the resistance ratio (TMR) provides a smaller signal margin, and the write path requires sustained current above the critical switching threshold for a duration set by the thermal stability requirements. Read energy is higher for MRAM because the sense amplifier must drive current through the MTJ's resistance, whereas SRAM sensing exploits passive charge sharing on pre-charged bitlines.
+Three of the six metrics are dramatically better for STT-MRAM and three are dramatically worse. The best are \emph{area} ($0.56\times$), \emph{leakage} ($0.13\times$), and \emph{write energy} ($0.82\times$); the worst are \emph{read latency} ($1.87\times$), \emph{write latency} ($20.4\times$), and \emph{read energy} ($1.33\times$). At the device level, this is a direct consequence of the storage mechanism: SRAM stores data as charge on bistable inverters that can be read and written at transistor speeds, while STT-MRAM relies on spin-transfer torque to manipulate a magnetic tunnel junction. The current-mode sensing path for MRAM is inherently slower than voltage-mode sensing because the resistance ratio (TMR) provides a smaller signal margin, and the write path requires sustained current above the critical switching threshold for a duration set by the thermal stability requirements. Read energy is higher for MRAM because the sense amplifier must drive current through the MTJ's resistance, whereas SRAM sensing exploits passive charge sharing on pre-charged bitlines.
 
 \subsection*{Task 3: TMR Sensitivity}
 
@@ -235,9 +257,9 @@ Raising the tunnel magnetoresistance ratio from 2:1 (R$_\text{AP}$/R$_\text{P}$ 
 
 \subsection*{Task 4: Write-Current Sensitivity}
 
-Halving the reset current from 200\,$\mu$A to 100\,$\mu$A does not change the cell area in NVSim because the MTJ's physical footprint (54\,F$^2$) dominates the total cell area, not the access transistor. The access transistor must be large enough to source the switching current, but at 200\,$\mu$A the transistor is already smaller than the MTJ pillar and its surrounding keep-out zones. Reducing the current to 100\,$\mu$A would allow a smaller transistor, but since the cell layout is MTJ-area-limited rather than transistor-limited, NVSim reports no area change. In a hypothetical design where the transistor were the area-limiting element (e.g., at a more advanced technology node with a smaller MTJ), halving the write current would enable a proportionally smaller transistor and a measurable area reduction. The slight reductions in latency ($-$1.3\%) and energy ($-$0.5\%) reflect the lower $I \cdot t$ product needed for switching.
+Halving the reset current from 200\,$\mu$A to 100\,$\mu$A does not change the cell area in NVSim because the MTJ's physical footprint (54\,F$^2$) dominates the total cell area, not the access transistor. The access transistor must be large enough to source the switching current, but at 200\,$\mu$A the transistor is already smaller than the MTJ pillar and its surrounding keep-out zones. Reducing the current to 100\,$\mu$A would allow a smaller transistor, but since the cell layout is MTJ-area-limited rather than transistor-limited, NVSim reports no area change. In a hypothetical design where the transistor were the area-limiting element (e.g., at a more advanced technology node with a smaller MTJ), halving the write current would enable a proportionally smaller transistor and a measurable area reduction. The read latency drops from 1.591\,ns to 1.571\,ns ($-$1.3\%) while write energy drops from 0.435\,nJ to 0.433\,nJ ($-$0.5\%), reflecting the lower $I \cdot t$ product needed for switching. Area and leakage remain unchanged (54\,F$^2$, 425\,mW).
 
-The quantitative trade-off is clear: STT-MRAM reduces area by 43.8\% and leakage by 86.7\%, but read latency increases by 87.2\% and write latency by $20.4\times$. The write-energy reduction is only 18.1\%. The primary advantage of STT-MRAM is therefore density and standby power -- it enables a much larger cache in the same die area, which becomes the key lever exploited in Part~E.
+The quantitative trade-off is clear: against the NVSim SRAM reference, STT-MRAM reduces area by 43.8\% and leakage by 86.7\%, but read latency increases by 87.2\% and write latency by $20.4\times$. The write-energy reduction is only 18.1\%. Against the CACTI Part~B baseline, STT-MRAM instead delivers faster read access (1.591\,ns vs.\ 2.902\,ns) and lower write energy (0.435\,nJ vs.\ 0.851\,nJ) at the cost of write latency. The primary advantage of STT-MRAM is therefore density and standby power -- it enables a much larger cache in the same die area, which becomes the key lever exploited in Part~E.
 
 %% ========================================================================
 \section*{Part D -- Ramulator 2: DDR4 Miss Stream}
@@ -281,13 +303,20 @@ ChRaBaRoCo          & 78\,845 & 1844.21 & 1\,121 &   7 & 878 & 55.9\% \\
 \caption{Part D -- row-buffer and throughput breakdown across configurations.}
 \end{table}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.48\textwidth]{../ramulator2/plots/cycles_bar.png}
+\includegraphics[width=0.48\textwidth]{../ramulator2/plots/row_pie.png}
+\caption{Part D -- total memory cycles across configurations (left); row hit/miss/conflict split for baseline FRFCFS + RoBaRaCoCh (right).}
+\end{figure}
+
 \subsection*{Task 2: Scheduler Comparison}
 
 The FCFS-proxy configuration (buffer depth = 1, no refresh) is not a true FCFS scheduler but a serializing proxy that processes one request at a time without reordering. Despite achieving a higher row-hit rate (69.6\%) -- because it processes requests in their original sequential order, which happens to have good spatial locality -- total execution time balloons to 42\,937 cycles ($4.5\times$ worse). This counterintuitive result demonstrates that reordering and parallelism are more important than raw row-hit rate: FRFCFS can overlap precharge--activate sequences for one bank with data transfers on another, hiding latency through bank-level parallelism. The serializing proxy eliminates this overlap, turning every DRAM timing constraint into a sequential stall. The lower per-request latency (61.90 cycles) is an artifact of the simplified model, not a genuine advantage.
 
 \subsection*{Task 3: Address Mapping}
 
-Switching to ChRaBaRoCo mapping is catastrophic: cycles jump to 78\,845 and average read latency to 1844.21 cycles. In this mapping, the row bits are placed below the bank bits in the address decomposition, which means that consecutive addresses map to \emph{different rows within the same bank}. Each successive access therefore triggers a row-buffer conflict -- requiring a precharge of the current row, activation of the new row, and then the column access -- rather than a row-buffer hit. The row-hit rate only marginally increases to 55.9\% (from 53.9\%) because a few accesses still happen to land in the same row, but the conflict count rises from 707 to 878, and the near-elimination of misses (down to 7) means almost every non-hit access is a costly conflict rather than a cold miss. This result underscores why address mapping is one of the most impactful microarchitectural decisions in memory controller design.
+Switching to ChRaBaRoCo mapping is catastrophic: cycles jump to 78\,845 and average read latency to 1844.21 cycles. In this mapping, the row bits are placed below the bank bits in the address decomposition, which means that consecutive addresses map to \emph{different rows within the same bank}. Each successive access therefore triggers a row-buffer conflict -- requiring a precharge of the current row, activation of the new row, and then the column access -- rather than a row-buffer hit. The row-hit rate only marginally increases to 55.9\% (from 53.9\%) because a few accesses still happen to land in the same row, but the conflict count rises from 707 to 878, and the near-elimination of misses (down to 7) means almost every non-hit access is a costly conflict rather than a cold miss. This result underscores why address mapping is one of the most impactful microarchitectural decisions in memory controller design. Note: the trace used here (\texttt{l2miss\_converted.trace}, 2048 requests) is smaller than the 2.2\,M-request trace in the reference report (generated from gem5's CommMonitor), so the absolute cycle counts differ but the relative trends across configurations are comparable.
 
 \subsection*{Task 4: Channels and Timing Sensitivity}
 
@@ -318,7 +347,7 @@ The timing-sensitivity experiment reveals that tCCD (column-to-column delay) is 
 
 \textit{Central question: does the program you care about actually run faster with STT-MRAM?}
 
-Part B gives the SRAM configuration a 7-cycle L2 hit latency (derived from the 2.90\,ns CACTI access time at a ${\sim}2$\,GHz clock), while Part~C shows that the same die area occupied by 2\,MB of SRAM can hold ${\sim}8$\,MB of STT-MRAM, with a 14-cycle hit latency (from the 1.591\,ns NVSim read latency, accounting for the $2\times$ slower access). The gem5 runs therefore compare 2\,MB / 7-cycle SRAM against 8\,MB / 14-cycle STT-MRAM at graph scale \texttt{-g\,14}, using atomic warm-up followed by O3 (out-of-order) execution.
+Part B gives the SRAM configuration a 7-cycle L2 hit latency (derived from the 2.90\,ns CACTI access time at a ${\sim}2$\,GHz clock), while Part~C shows that the same die area occupied by 2\,MB of SRAM can hold ${\sim}8$\,MB of STT-MRAM, with a 14-cycle hit latency (from the 1.591\,ns NVSim read latency, accounting for the $2\times$ slower access). The gem5 runs therefore compare 2\,MB / 7-cycle SRAM against 8\,MB / 14-cycle STT-MRAM at graph scale \texttt{-g\,14}, using the O3CPU with fast-forward warm-up. A second sweep at \texttt{-g\,10} with TimingSimpleCPU (small working set, both caches fit) is reported alongside to show the verdict flip with scale. The assignment's suggested \texttt{-g\,18} was not re-run (O3 detailed sim cost); its expected outcome is discussed as a prediction in Task~4, not a measurement.
 
 \begin{table}[H]
 \centering
@@ -334,6 +363,7 @@ sssp\,/\,MRAM (8\,MB, 14\,cyc) & 0.3313 & 9.50\%  & 0.51754 & 342\,904\,674 \\
 \bottomrule
 \end{tabularx}
 \caption{Part E Task 1 -- gem5 comparison using identical instruction streams.}
+\label{tab:partE}
 \end{table}
 
 \subsection*{Task 1: Whole-Program Comparison}
@@ -354,6 +384,20 @@ sssp & $1.049\times$ & +4.9\% & 31.46\% $\rightarrow$ 9.50\%  & Large capacity o
 \caption{Part E -- derived comparison. Speedup $>1$ means MRAM is faster.}
 \end{table}
 
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X X}
+\toprule
+\textbf{Kernel (TimingSimple, -g\,10)} & \textbf{SRAM simS} & \textbf{MRAM simS} & \textbf{L2 miss rate} & \textbf{Winner} \\
+\midrule
+bfs  & 0.020957 & 0.020972 & 27.85\% $\rightarrow$ 27.85\% & SRAM (+0.07\%) \\
+sssp & 0.027119 & 0.027146 & 25.11\% $\rightarrow$ 25.11\% & SRAM (+0.10\%) \\
+\bottomrule
+\end{tabularx}
+\caption{Part E -- scale sensitivity at \texttt{-g\,10} (TimingSimpleCPU). Identical hits/misses across 2\,MB and 8\,MB: working set fits, capacity buys nothing, latency decides.}
+\end{table}
+
 \subsection*{Task 2: Kernel Sensitivity}
 
 The sssp kernel benefits nearly $3\times$ more than bfs ($4.9\%$ vs.\ $1.7\%$) because it has fundamentally worse cache locality. With the 2\,MB SRAM, sssp suffers a 31.46\% L2 miss rate compared to bfs's 16.64\%. This means sssp's working set significantly overflows the 2\,MB cache, generating many more expensive DRAM accesses. When the cache is expanded to 8\,MB via MRAM, sssp captures a much larger fraction of its working set (miss rate drops to 9.50\%), converting many DRAM accesses to L2 hits. For bfs, the working set already partially fits in 2\,MB, so the additional capacity provides diminishing returns. This result illustrates a general principle: cache-capacity upgrades benefit workloads with poor locality more than those that are already well-served by the existing cache size.
@@ -371,22 +415,28 @@ The choice of CPU model materially affects how the SRAM--MRAM trade-off appears.
 \toprule
 \textbf{Task} & \textbf{Result} & \textbf{Reasoning} \\
 \midrule
-2 & MRAM wins for both kernels; sssp benefits more. & Workloads with poorer locality gain more from capacity than they lose from slower hit latency. \\[0.3em]
+2 & MRAM wins for both kernels at \texttt{-g\,14}; sssp benefits more. & Workloads with poorer locality gain more from capacity than they lose from slower hit latency. \\[0.3em]
 3 & O3 hides part of cache-stall cost. & TimingSimpleCPU exposes stalls directly; O3 overlaps independent work, reducing the visible effect of slower hits. \\[0.3em]
-4 & STT-MRAM is the better choice, but with caveats. & $4\times$ capacity with $2\times$ slower hits still wins when miss rate drops sharply; write-intensive workloads could reverse this. \\
+4 & Measured: MRAM wins at \texttt{-g\,14}, SRAM wins at \texttt{-g\,10}; predicted: SRAM wins at \texttt{-g\,18}. & Verdict flips with working set: below 2\,MB latency decides (SRAM +0.1\% measured); at \texttt{-g\,14} capacity decides (MRAM +1.7--4.9\% measured); beyond 8\,MB both miss alike so latency should decide again (prediction, not run). \\
 \bottomrule
 \end{tabularx}
 \caption{Part E Tasks 2--4 -- interpretation summary.}
 \end{table}
 
-The simulation chain points to STT-MRAM as the preferred L2 technology for this specific workload and configuration: Part~C establishes that the same die area yields $4\times$ the capacity, Part~D characterizes the DRAM backend that penalizes every L2 miss, and Part~E shows that the larger cache's miss-rate reduction ($-53\%$ for bfs, $-70\%$ for sssp) outweighs the $2\times$ hit-latency penalty on both kernels. However, three legitimate reviewer attack points remain: (i)~the $4\times$ capacity ratio assumes the full SRAM area converts to MRAM at NVSim's density, which may be optimistic if peripheral circuitry does not scale; (ii)~the O3 CPU model hides some of the hit-latency cost, so a simpler core would change the balance; and (iii)~graph scale \texttt{-g\,14} produces a smaller working set than the assignment's suggested \texttt{-g\,18}, which would stress the 8\,MB MRAM cache more and potentially shift the outcome.
+The simulation chain points to STT-MRAM as the preferred L2 technology for this specific workload and configuration at \texttt{-g\,14}: Part~C establishes that the same die area yields $4\times$ the capacity, Part~D characterizes the DRAM backend that penalizes every L2 miss, and Part~E shows that the larger cache's miss-rate reduction ($-53\%$ for bfs, $-70\%$ for sssp) outweighs the $2\times$ hit-latency penalty on both kernels. However, three legitimate reviewer attack points remain: (i)~the $4\times$ capacity ratio assumes the full SRAM area converts to MRAM at NVSim's density, which may be optimistic if peripheral circuitry does not scale; (ii)~the O3 CPU model hides some of the hit-latency cost, so a simpler core would change the balance; (iii)~graph scale \texttt{-g\,18} was not run; by the measured trend (identical miss rates at \texttt{-g\,10}, halved miss at \texttt{-g\,14}), a larger working set overflowing both caches would equalize miss rates and let the $2\times$ hit-latency penalty dominate, reversing the outcome. This prediction -- not a measurement -- is the most important caveat: the MRAM advantage is scale-dependent.
 
-The cross-part logic is internally consistent. CACTI supplies the 2\,MB SRAM hit baseline, NVSim supplies the density--latency trade-off, Ramulator characterizes the DRAM penalty for misses, and gem5 applies these numbers to identical instruction streams. MRAM loses on hit time but wins on miss rate, especially for sssp; whole-program timing therefore favors the larger cache under this exact 45\,nm, DDR4, FRFCFS scheduler, and O3 CPU setup.
+The cross-part logic is internally consistent at \texttt{-g\,14}. CACTI supplies the 2\,MB SRAM hit baseline (2.902\,ns access), NVSim supplies the density--latency trade-off (3.59\,mm$^2$, 1.591\,ns), Ramulator characterizes the DRAM penalty for misses (9\,594 cycles baseline on the 2048-request trace), and gem5 applies these numbers to identical instruction streams. At \texttt{-g\,14}, MRAM's capacity benefit outweighs its latency penalty; at \texttt{-g\,10}, the reverse holds (measured).
 
 %% ========================================================================
 \section*{Conclusion}
 %% ========================================================================
 
-SRAM remains the superior bitcell in isolation -- it is faster, lower-energy per access, and simpler to integrate. However, at the system level, STT-MRAM wins when its density advantage (${\sim}4\times$ more capacity per unit area) can be leveraged to reduce cache miss rates significantly. The main bottlenecks that determine which technology ``wins'' are cache locality of the target workload, the DRAM row policy and address mapping (which set the cost of each miss), and the CPU model's ability to hide memory-access latency. Device-level speed alone does not decide the answer; the system context is what tilts the balance.
+SRAM remains the superior bitcell in isolation -- it is faster, lower-energy per access, and simpler to integrate. However, at the system level, STT-MRAM wins when its density advantage (${\sim}4\times$ more capacity per unit area) translates into a large miss-rate reduction, i.e.\ when the working set fits in 8\,MB but not in 2\,MB (\texttt{-g\,14}: MRAM +1.7--4.9\%). When the set fits in both (\texttt{-g\,10}) or overflows both (predicted \texttt{-g\,18}), SRAM's $2\times$ faster hits win. The main bottlenecks that determine which technology ``wins'' are cache locality of the target workload (which determines whether the capacity advantage translates to miss-rate reduction), the graph scale \texttt{-g} parameter, the DRAM row policy and address mapping (which set the cost of each miss), and the CPU model's ability to hide memory-access latency. Device-level speed alone does not decide the answer; the system context is what tilts the balance.
+
+%% ========================================================================
+\section*{Code Availability}
+%% ========================================================================
+
+All simulation configs, scripts, and plotting code for Parts A--E are available at \url{https://github.com/DevAbhinav-23/AMCAS_Assignments}.
 
 \end{document}
