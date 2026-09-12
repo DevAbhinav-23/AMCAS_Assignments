@@ -33,6 +33,11 @@ Assign-1/gem5/tests/test-progs/**/bin/
 Assign_1-Report.out
 Assign-1/Report/*.out
 
+# Stray report copies (not the final report under Assign-1/Report/)
+Assign_1-Report_1.pdf
+Assign_1-Report.pdf
+Assign-1/Assign_1-Report_final_1.pdf
+
 # Editor and OS temporary files
 **/*~
 **/*.swp

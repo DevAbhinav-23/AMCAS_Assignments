@@ -2,7 +2,7 @@
 
 Assignment 1 for **ECE2.414 – Advanced Memory Circuits and Systems** at IIIT Hyderabad, Monsoon 2026.
 
-The assignment studies memory behavior from the device level through whole-program simulation. The complete analysis is available in [`Assign_1-Report_1.pdf`](Assign_1-Report_1.pdf).
+The assignment studies memory behavior from the device level through whole-program simulation. The complete analysis is available in [`Assign-1/Report/Assign_1-Report.pdf`](Assign-1/Report/Assign_1-Report.pdf).
 
 ## Repository layout
 
@@ -45,6 +45,7 @@ The [`gapbs/`](Assign-1/gapbs/) directory supplies the BFS and SSSP benchmark pr
 
 ## Reference files
 
-- [Full assignment report](Assign_1-Report_1.pdf)
+- [Final assignment report](Assign-1/Report/Assign_1-Report.pdf) (LaTeX source: [`Assign_1-Report.tex`](Assign-1/Report/Assign_1-Report.tex))
 - [Assignment handout](Assign-1/Assignment1_AMCAS.pdf)
-- [Compiled report copy](Assign-1/Report/Assign_1-Report.pdf)
+
+Stray report copies (`Assign_1-Report_1.pdf`, `Assign_1-Report.pdf`, `Assign-1/Assign_1-Report_final_1.pdf`) are excluded by [`.gitignore`](.gitignore) and not versioned; the file above is the sole final report.
