@@ -46,5 +46,3 @@ The [`gapbs/`](Assign-1/gapbs/) directory supplies the BFS and SSSP benchmark pr
 ## Reference files
 
 - [Final assignment report](Assign-1/Report/Assign_1-Report.pdf) (LaTeX source: [`Assign_1-Report.tex`](Assign-1/Report/Assign_1-Report.tex))
-
-Stray report copies (`Assign_1-Report_1.pdf`, `Assign_1-Report.pdf`, `Assign-1/Assign_1-Report_final_1.pdf`) and non-final reference PDFs (`AMCAS_assignment_1-2 (1).pdf`, `Assign-1/Assignment1_AMCAS.pdf`) are excluded by [`.gitignore`](.gitignore) and not versioned; the file above is the sole final report.
