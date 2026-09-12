@@ -272,15 +272,15 @@ ChRaBaRoCo          & 78\,845 & 1844.21 & 1\,121 &   7 & 878 & 55.9\% \\
 
 \subsection*{Task 2: Scheduler Comparison}
 
-The FCFS-proxy achieves higher row-hit rate (69.6\%) but $4.5\times$ worse throughput (42\,937 cycles), demonstrating that bank-level parallelism and request reordering matter more than raw hit rate.
+The FCFS-proxy achieves higher row-hit rate (69.6\%) but $4.5\times$ worse throughput (42\,937 cycles), demonstrating that bank-level parallelism and request reordering matter more than raw hit rate. FRFCFS prioritizes requests that hit an already-open row (``first-ready'') over older requests stalled on timing, so it overlaps precharge--activate sequences on one bank with data bursts on another. With tRCD = tRP = 22 cycles, every row conflict costs a 44-cycle precharge--activate round trip before the column command can issue; FCFS pays this serially on the critical path, while FRFCFS hides it behind useful work on idle banks. The proxy's buffer depth of 1 additionally serializes issue (no queue to pick from), turning every timing constraint into a stall. Its lower per-request latency (61.90 cycles) is therefore an artifact of an unloaded, non-reordering model rather than a genuine advantage -- throughput, not single-request latency, is the scheduler's job.
 
 \subsection*{Task 3: Address Mapping}
 
-ChRaBaRoCo is catastrophic (78\,845 cycles): placing row bits below bank bits maps consecutive addresses to different rows in the same bank, converting most accesses to costly conflicts (878 vs.\ 707 baseline).
+ChRaBaRoCo is catastrophic (78\,845 cycles, $8.2\times$ baseline): placing row bits below bank bits maps consecutive cache-line addresses to different rows in the same bank, converting most accesses to costly conflicts (878 vs.\ 707 baseline, misses collapsing to 7). Each conflict pays the full tRP + tRCD penalty plus queueing behind the bank's busy row, and average read latency explodes to 1844.21 cycles. The row-hit rate barely moves (55.9\% vs.\ 53.9\%) because the few remaining hits are accidental, while bank-level parallelism -- the mechanism FRFCFS relies on -- is destroyed: with consecutive lines colliding in one bank, the scheduler finds no ready request elsewhere while that bank grinds through precharge--activate. This is why address mapping is a first-order memory-controller decision: RoBaRaCoCh stripes sequential lines across columns of one row (hits) and across banks (parallelism), whereas row-below-bank concentrates them into conflicts.
 
 \subsection*{Task 4: Channels and Timing Sensitivity}
 
-A second channel cuts cycles nearly in half (4\,889) despite lower row-hit rate (32.7\%).
+A second channel cuts cycles nearly in half (4\,889, $1.96\times$ speedup) despite lower row-hit rate (32.7\%): channel interleaving splits spatially local lines across two independent controllers, halving per-channel locality but doubling service bandwidth. Throughput scales because the two channels retire requests concurrently; per-request latency barely improves (233.57 vs.\ 262.93 cycles, $-11\%$) since a single access still pays the same DRAM timing. This throughput-vs-latency split is the expected signature of channel scaling and confirms the trace is bandwidth-bound rather than latency-bound.
 
 \begin{table}[H]
 \centering
@@ -299,7 +299,7 @@ tCCD: 4 $\rightarrow$ 8    & 12\,203 & 322.1 & +27.2\% \\
 \caption{Part D Task 4 -- timing-sensitivity experiment.}
 \end{table}
 
-tCCD is the binding constraint (+27.2\%), far exceeding tRCD/tRP/tRAS, because the 53.9\% hit rate means many accesses are gated only by column-to-column spacing within an open row.
+tCCD is the binding constraint (+27.2\%), far exceeding tRCD/tRP/tRAS, because the 53.9\% hit rate means many accesses are gated only by column-to-column spacing within an open row. Doubling tRCD or tRP (+9.8\%/+10.7\%) hurts only the conflict/miss fraction, and tRAS (+4.3\%) rarely binds since rows stay open across multiple column hits. The way to determine this from the output is the single-parameter sweep in the table: vary one timing knob at a time with trace, scheduler, and mapping fixed, then rank by cycles increase. The knob whose doubling moves total cycles most is binding for that workload; here tCCD's 27.2\% dominates because this trace is row-locality rich. A conflict-heavy trace (e.g.\ ChRaBaRoCo) would instead crown tRP/tRCD -- binding is a property of workload $\times$ mapping, not of the DRAM alone. For the central question, Part~D's lesson is that every L2 miss that reaches DRAM costs hundreds of cycles and its price depends on scheduler, mapping, and channel count; Part~E's miss-rate deltas must therefore be read through this backend cost, which is exactly what makes the 8\,MB MRAM capacity win at \texttt{-g\,14}.
 
 %% ========================================================================
 \section*{Part E -- gem5: Whole-Program Simulation}
@@ -346,11 +346,11 @@ sssp & 0.027119 & 0.027146 & 25.11\% $\rightarrow$ 25.11\% & SRAM (+0.10\%) \\
 
 \subsection*{Task 2: Kernel Sensitivity}
 
-sssp benefits ${\sim}3\times$ more (4.9\% vs.\ 1.7\%) because its 2\,MB miss rate (31.46\%) is much higher than bfs (16.64\%), so the extra capacity captures proportionally more of its working set.
+sssp benefits ${\sim}3\times$ more (4.9\% vs.\ 1.7\%) because its 2\,MB miss rate (31.46\%) is much higher than bfs (16.64\%), so the extra capacity captures proportionally more of its working set. The breakeven arithmetic favors capacity heavily here: each avoided L2 miss saves a full DRAM round trip (${\sim}100$+ cycles per Part~D's latency analysis), while each retained hit pays only 7 extra cycles ($14-7$). For sssp, the miss count falls by roughly $70\%$, converting tens of thousands of DRAM accesses into L2 hits; the 7-cycle tax on hits is an order of magnitude smaller than the saved miss penalty, hence the 4.9\% net win. For bfs, the working set already partially fits in 2\,MB (16.64\% miss), so the same $4\times$ capacity buys a smaller absolute miss reduction ($-53\%$ relatively, but from a lower base) and the net is only 1.7\%. This is the general principle the assignment targets: capacity upgrades pay off in proportion to the baseline miss rate, and pointer-chasing graph kernels with poor locality (sssp's frontier expansion over irregular edges) sit exactly in the regime where density beats latency.
 
 \subsection*{Task 3: CPU-Model Effect}
 
-The O3CPU partially hides MRAM's $2\times$ hit-latency penalty by overlapping independent work during stalls. A TimingSimpleCPU exposes every stall directly, making the measured 1.7--4.9\% MRAM advantage conservative for in-order cores.
+The O3CPU partially hides MRAM's $2\times$ hit-latency penalty by overlapping independent work during stalls. A TimingSimpleCPU exposes every stall directly, making the measured 1.7--4.9\% MRAM advantage conservative for in-order cores. The \texttt{-g\,10} TimingSimple sweep confirms the mechanism from the other side: with identical miss rates across cache sizes (27.85\% bfs, 25.11\% sssp -- capacity buys nothing), the in-order core reports SRAM faster by exactly the hit-latency delta (+0.07\% bfs, +0.10\% sssp), since every L2 hit costs 7 extra cycles under MRAM with no avoided DRAM access to compensate. In other words, the CPU model sets the exchange rate between hits and misses: out-of-order execution discounts the per-hit tax (favoring MRAM at \texttt{-g\,14}), while in-order execution charges it in full (which is why the \texttt{-g\,10} SRAM margin, though tiny in absolute terms, is structurally pure latency). Any cross-core comparison must therefore normalize by this effect before attributing deltas to the memory technology itself.
 
 \subsection*{Task 4: Final System Choice}
 
