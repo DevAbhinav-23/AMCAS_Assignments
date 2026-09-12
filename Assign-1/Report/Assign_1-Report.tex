@@ -270,13 +270,6 @@ ChRaBaRoCo          & 78\,845 & 1844.21 & 1\,121 &   7 & 878 & 55.9\% \\
 \caption{Part D -- row-buffer breakdown across configurations.}
 \end{table}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.46\textwidth]{../ramulator2/plots/cycles_bar.png}
-\includegraphics[width=0.46\textwidth]{../ramulator2/plots/row_pie.png}
-\caption{Total memory cycles (left); row hit/miss/conflict split for baseline (right).}
-\end{figure}
-
 \subsection*{Task 2: Scheduler Comparison}
 
 The FCFS-proxy achieves higher row-hit rate (69.6\%) but $4.5\times$ worse throughput (42\,937 cycles), demonstrating that bank-level parallelism and request reordering matter more than raw hit rate.
