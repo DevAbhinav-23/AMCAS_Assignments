@@ -1,5 +1,5 @@
 \documentclass[a4paper,11pt]{article}
-\usepackage[margin=0.7in]{geometry}
+\usepackage[margin=0.65in]{geometry}
 \usepackage{booktabs}
 \usepackage{amsmath}
 \usepackage{hyperref}
@@ -13,43 +13,33 @@
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 
-\definecolor{secblue}{HTML}{1a3a5c}
-\definecolor{linkblue}{HTML}{2563eb}
-\definecolor{lightgray}{HTML}{f5f5f5}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=black}
 
-\hypersetup{
-    colorlinks=true,
-    linkcolor=linkblue,
-    urlcolor=linkblue,
-    citecolor=linkblue
-}
-
-\titleformat{\section}{\Large\bfseries\color{secblue}}{}{0pt}{}[\vspace{-0.3em}\color{secblue}\rule{\textwidth}{0.6pt}]
-\titleformat{\subsection}{\large\bfseries\color{secblue}}{}{0pt}{}
-\titlespacing{\section}{0pt}{1.2em}{0.6em}
-\titlespacing{\subsection}{0pt}{0.8em}{0.3em}
+\titleformat{\section}{\large\bfseries}{}{0pt}{}[\vspace{-0.3em}\rule{\textwidth}{0.5pt}]
+\titleformat{\subsection}{\normalsize\bfseries}{}{0pt}{}
+\titlespacing{\section}{0pt}{0.8em}{0.3em}
+\titlespacing{\subsection}{0pt}{0.5em}{0.15em}
 
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.4em}
-\renewcommand{\arraystretch}{1.15}
+\setlength{\parskip}{0.2em}
+\renewcommand{\arraystretch}{1.1}
 
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.4pt}
-\fancyhead[L]{\small\textcolor{secblue}{ECE2.414 -- Assignment 1}}
-\fancyhead[R]{\small\textcolor{secblue}{Abhinav Venkata Kota}}
+\fancyhead[L]{\small AMCAS Assignment 1}
+\fancyhead[R]{\small Abhinav Venkata Kota}
 \fancyfoot[C]{\small\thepage\ / \pageref{LastPage}}
 
 \begin{document}
 
 \begin{center}
-    {\LARGE\bfseries\color{secblue} ECE2.414 -- Advanced Memory Circuits and Systems}\\[0.4em]
-    {\Large Assignment 1: Simulating Memory -- Devices to Systems}\\[0.8em]
-    {\large Abhinav Venkata Kota}\\[0.15em]
-    {\normalsize IIIT Hyderabad \quad$\cdot$\quad Monsoon 2026}
+    {\Large\bfseries AMCAS Assignment 1}\\[0.5em]
+    {\large Abhinav Venkata Kota}\\[0.1em]
+    {\normalsize Roll No: 2024102059 \quad$\cdot$\quad IIIT Hyderabad ECE}
 \end{center}
 
-\vspace{0.6em}
+\vspace{0.3em}
 
 %% ========================================================================
 \section*{Part A -- ngspice: 6T SRAM Read Margin}
@@ -64,10 +54,10 @@
 \toprule
 \textbf{Task} & \textbf{Result} & \textbf{Interpretation} \\
 \midrule
-1 & $\Delta V(BL,BLB)$ at 2\,ns = 729.86\,mV; $q_{\max}=205.52$\,mV. & Reads correctly; margin is ${\sim}10.6\times$ the 69\,mV lecture reference. \\[0.3em]
-2 & Access width 0.24\,$\mu$m: $\Delta V=852.34$\,mV, $q_{\max}=271.22$\,mV. & Read disturb grows; cell is more marginal, not stable enough for worse PVT corners. \\[0.3em]
-3 & $\Delta V$ falls below 25\,mV at $V_{DD}\approx0.448$\,V. & Within 1.1--0.6\,V sweep, read still safe; failure starts below ${\sim}0.45$\,V. \\[0.3em]
-4 & At 85\,$^\circ$C: $\Delta V=582.12$\,mV, $q_{\max}=220.76$\,mV. & $\Delta V$ moves more than sense-amp offset; limiting failure mode is read disturb. \\
+1 & $\Delta V(BL,BLB)$ at 2\,ns = 729.86\,mV; $q_{\max}=205.52$\,mV. & Reads correctly; margin is ${\sim}10.6\times$ the 69\,mV lecture reference. \\[0.2em]
+2 & Access width 0.24\,$\mu$m: $\Delta V=852.34$\,mV, $q_{\max}=271.22$\,mV. & Read disturb grows; cell is more marginal at worse PVT corners. \\[0.2em]
+3 & $\Delta V$ falls below 25\,mV at $V_{DD}\approx0.448$\,V. & Within 1.1--0.6\,V sweep, read still safe; failure starts below ${\sim}0.45$\,V. \\[0.2em]
+4 & At 85\,$^\circ$C: $\Delta V=582.12$\,mV, $q_{\max}=220.76$\,mV. & Limiting failure mode is read disturb, not sense-amp resolution. \\
 \bottomrule
 \end{tabularx}
 \caption{Part A summary of nominal, sizing, supply, and temperature results.}
@@ -75,21 +65,21 @@
 
 \subsection*{Task 1: Nominal Read Margin}
 
-The bitline differential $\Delta V(BL,BLB)$ measured at $t=2$\,ns is 729.86\,mV, while the stored-node voltage $v(Q)$ rises to a maximum of $q_{\max}=205.52$\,mV before settling. Because the sense amplifier only requires ${\sim}69$\,mV of differential to resolve correctly (the lecture reference value), the nominal margin is roughly $10.6\times$ larger than the minimum needed. This large margin means the cell reads correctly at nominal conditions with substantial headroom against process, voltage, and temperature (PVT) variation. The reason the margin is so generous is that at the nominal $V_{DD}=1.1$\,V, the pull-down NMOS devices (MD1/MD2) are much stronger than the access transistors (MA1/MA2), so the voltage divider formed during read keeps $v(Q)$ well below the inverter trip point of the cross-coupled pair.
+The bitline differential at $t=2$\,ns is 729.86\,mV ($q_{\max}=205.52$\,mV), giving ${\sim}10.6\times$ the 69\,mV sense-amp threshold. At nominal $V_{DD}=1.1$\,V the pull-down NMOS devices dominate the access transistors, keeping $v(Q)$ well below the inverter trip point.
 
 \subsection*{Task 2: Access-Device Sizing}
 
-Widening the access transistors from the nominal width to 0.24\,$\mu$m strengthens the path between the bitline and the internal storage node. This has two effects: (i)~the bitline differential increases to 852.34\,mV because the wider device discharges BL faster, and (ii)~the stored-node disturbance $q_{\max}$ rises from 205.52\,mV to 271.22\,mV -- a 31.9\% increase -- because more current flows into the ``0'' storage node during the read, pushing it closer to the inverter trip point. Although the cell still survives at nominal PVT, the enlarged disturb erodes the static noise margin (SNM). At worst-case process corners (slow NMOS, fast PMOS) or elevated temperature, this reduced margin could cause a destructive read, flipping the stored bit. The trade-off is fundamental: wider access devices improve sensing speed and bitline swing but degrade read stability. SRAM designers resolve this tension through careful cell ratio ($\beta$-ratio) tuning, where the pull-down device must always be stronger than the access device.
+Widening access transistors to 0.24\,$\mu$m increases $\Delta V$ to 852.34\,mV but raises $q_{\max}$ by 31.9\% to 271.22\,mV, degrading the $\beta$-ratio and eroding read stability. At worst-case PVT corners this reduced SNM could cause a destructive read.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../code_ngspice/Task-2_vq.png}
-\caption{Part A Task 2 -- read disturb $v(Q)$: nominal peaks at 205.5\,mV, widened access at 271.2\,mV, 85\,$^\circ$C at 220.8\,mV.}
+\includegraphics[width=0.78\textwidth]{../code_ngspice/Task-2_vq.png}
+\caption{Read disturb $v(Q)$: nominal 205.5\,mV, widened access 271.2\,mV, 85\,$^\circ$C 220.8\,mV.}
 \end{figure}
 
 \subsection*{Task 3: Supply Sweep}
 
-Sweeping $V_{DD}$ from 1.1\,V down to 0.4\,V reveals that $\Delta V$ decreases monotonically with supply voltage. The 25\,mV sense-amplifier offset threshold is crossed at approximately 0.448\,V (obtained by linear interpolation between the 0.45\,V and 0.40\,V data points). Within the requested 1.1--0.6\,V window, the minimum $\Delta V$ is 143.9\,mV (at 0.6\,V), which remains ${\sim}5.8\times$ above the offset threshold, so the read works safely across this entire range. The monotonic decline occurs because lower $V_{DD}$ reduces the overdrive voltage on both the access and pull-down transistors, weakening the current that develops the bitline differential. The near-linear relationship between $\Delta V$ and $V_{DD}$ in the mid-range reflects the fact that both transistor stacks scale roughly proportionally with supply.
+$\Delta V$ decreases monotonically with $V_{DD}$; the 25\,mV threshold is crossed at ${\approx}0.448$\,V (interpolated). Within 1.1--0.6\,V the minimum $\Delta V$ is 143.9\,mV (${\sim}5.8\times$ above threshold), so the read is safe across this range.
 
 \begin{table}[H]
 \centering
@@ -106,20 +96,18 @@ $V_{DD}$ (V) & 0.50 & 0.45 & 0.40 & & & \\
 $\Delta V$ (mV) & 53.6 & 25.7 & 10.7 & & & \\
 \bottomrule
 \end{tabularx}
-\caption{Part A Task 3 -- supply sweep. Linear interpolation between 0.45\,V and 0.40\,V gives the 25\,mV crossing near 0.448\,V.}
+\caption{Part A Task 3 -- supply sweep. Interpolation between 0.45\,V and 0.40\,V gives the 25\,mV crossing near 0.448\,V.}
 \end{table}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../code_ngspice/Task-3_dv_vs_vdd.png}
-\caption{Part A Task 3 -- $\Delta V$ at 2\,ns vs.\ $V_{DD}$ with 25\,mV sense-amp offset; crossing near 0.448\,V, safe across 1.1--0.6\,V.}
+\includegraphics[width=0.78\textwidth]{../code_ngspice/Task-3_dv_vs_vdd.png}
+\caption{$\Delta V$ at 2\,ns vs.\ $V_{DD}$; 25\,mV crossing near 0.448\,V, safe across 1.1--0.6\,V.}
 \end{figure}
 
 \subsection*{Task 4: Temperature Sensitivity}
 
-At 85\,$^\circ$C, $\Delta V$ drops to 582.12\,mV (a 20.2\% reduction from nominal) and $q_{\max}$ rises to 220.76\,mV (a 7.6\% increase). The drop in $\Delta V$ occurs because elevated temperature reduces carrier mobility in the MOSFET channel, lowering the drive current that develops the bitline differential. Simultaneously, the higher temperature increases subthreshold leakage, which allows more current to flow into the stored node during the read access, raising $q_{\max}$. The fact that $\Delta V$ moves more than the sense-amplifier offset means that the dominant failure mechanism at high temperature is read disturb (i.e., $q_{\max}$ approaching the trip point), not the sense amplifier's inability to resolve the differential. This is the expected hierarchy for 6T SRAM: at elevated temperatures, the cell's internal stability degrades faster than the external sensing path.
-
-The nominal access-device result serves as the reference point for the later system-level comparison. Widening MA1/MA2 increases $q_{\max}$ by 31.9\%, the high-temperature differential is 20.2\% below nominal, and stored-node disturbance is 7.6\% higher. The voltage margin remains large at the stated operating point, but both sizing and temperature push the stored state in the unfavorable direction -- a fact that becomes important when selecting technology in Part~E.
+At 85\,$^\circ$C, $\Delta V$ drops 20.2\% to 582.12\,mV and $q_{\max}$ rises 7.6\% to 220.76\,mV. Reduced carrier mobility lowers drive current while increased subthreshold leakage raises the stored-node disturbance, making read disturb the dominant high-temperature failure mechanism.
 
 %% ========================================================================
 \section*{Part B -- CACTI: 2\,MB SRAM L2}
@@ -127,26 +115,9 @@ The nominal access-device result serves as the reference point for the later sys
 
 \textit{Central question: how fast, how big, and how leaky is a 2\,MB SRAM at 45\,nm?}
 
-\begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{l l X l}
-\toprule
-\textbf{Metric} & \textbf{Value} & \textbf{Sweep / Alternative} & \textbf{Value} \\
-\midrule
-Access time & 2.90184\,ns & 256\,kB $\rightarrow$ 16\,MB & 2.417 $\rightarrow$ 6.362\,ns \\
-Read energy & 0.792885\,nJ & Pure delay / area / ED$^2$ & 4/2/1, 2/2/1, 4/2/1 \\
-Leakage power & 562.632\,mW & Best organization & 4/2/1 \\
-Area & 11.4742\,mm$^2$ & Bitline hand-check & 0.4069 vs 18.7\,ns \\
-\bottomrule
-\end{tabularx}
-\caption{Part B baseline CACTI result and related reference values.}
-\label{tab:partB}
-\end{table}
-
 \subsection*{Task 1: Baseline Organization}
 
-CACTI reports a 2\,MB SRAM L2 cache at 45\,nm with the following baseline metrics: 2.90184\,ns access time, 0.792885\,nJ read energy per access, 562.632\,mW total leakage power, and 11.4742\,mm$^2$ die area. The optimal organization is Ndwl/Ndbl/Nspd = 4/2/1, meaning the data array is subdivided into 4 wordline divisions and 2 bitline divisions with a single subarray per data-out bit. This organization reflects CACTI's internal optimizer balancing decoder delay, bitline length, wordline RC, and H-tree routing to find the partition that minimizes access time. The 4/2/1 split provides enough mat-level parallelism to keep the wordline and bitline segments short, reducing their RC delay contribution, while not over-subdividing to the point where peripheral overhead (decoders, drivers, muxes) dominates area and energy.
+CACTI reports 2.90184\,ns access time, 0.792885\,nJ read energy, 562.632\,mW leakage, and 11.4742\,mm$^2$ area. The optimal organization is Ndwl/Ndbl/Nspd\,=\,4/2/1, balancing decoder delay, bitline length, wordline RC, and H-tree routing.
 
 \subsection*{Task 2: Capacity Scaling}
 
@@ -166,39 +137,39 @@ CACTI reports a 2\,MB SRAM L2 cache at 45\,nm with the following baseline metric
 16\,MB   & 6.36235 & 1.74213  & 4244.52   & 74.6677  \\
 \bottomrule
 \end{tabularx}
-\caption{Part B Task 2 -- capacity sweep. All metrics grow with capacity, but at different rates.}
+\caption{Part B Task 2 -- capacity sweep (256\,kB--16\,MB).}
 \end{table}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../cacti/code_cacti/Task-2_capacity.png}
-\caption{Part B Task 2 -- access time vs.\ $\log_2$(capacity); linear to 2\,MB, super-linear after (H-tree RC dominates).}
+\includegraphics[width=0.78\textwidth]{../cacti/code_cacti/Task-2_capacity.png}
+\caption{Access time vs.\ $\log_2$(capacity); linear to 2\,MB, super-linear after (H-tree RC dominates).}
 \end{figure}
 
-Access time rises from 2.417\,ns at 256\,kB to 6.362\,ns at 16\,MB -- a $2.63\times$ increase for a $64\times$ capacity growth. The ``one gate delay per capacity doubling'' heuristic holds only loosely: doubling from 2\,MB to 4\,MB adds 21.7\% to access time, while doubling from 4\,MB to 8\,MB adds 26.7\%. The super-linear growth at larger capacities occurs because wire delay (which scales with physical distance, not transistor count) and H-tree routing overhead become the dominant latency components. Leakage power scales almost linearly with capacity because each additional bitcell contributes a roughly constant subthreshold current. Area scaling is also near-linear, though peripheral circuits introduce a sub-linear component at smaller sizes.
+Access time grows $2.63\times$ for $64\times$ capacity (256\,kB$\rightarrow$16\,MB). Growth is super-linear at larger sizes because wire delay and H-tree routing dominate. Leakage and area scale near-linearly.
 
 \subsection*{Task 3: Organization Objective}
 
 \begin{table}[H]
 \centering
 \footnotesize
-\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X >{\centering\arraybackslash}X X}
+\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X X}
 \toprule
-\textbf{Objective} & \textbf{Access (ns)} & \textbf{Best Ndwl/Ndbl/Nspd} & \textbf{Interpretation} \\
+\textbf{Objective} & \textbf{Weight} & \textbf{Access (ns)} & \textbf{Ndwl/Ndbl/Nspd} & \textbf{Interpretation} \\
 \midrule
-Pure delay & 2.89231 & 4/2/1 & More mat parallelism minimizes critical path. \\
-Pure area  & 3.35518 & 2/2/1 & Fewer subdivisions reduce peripheral overhead. \\
-ED$^2$     & 2.90184 & 4/2/1 & Delay benefit dominates the energy--delay trade-off. \\
+Pure delay & 100:0:0:0:0 & 2.89231 & 4/2/1 & More mat parallelism minimizes critical path. \\
+Pure area  & 0:0:0:0:100 & 3.35518 & 2/2/1 & Fewer subdivisions reduce peripheral overhead. \\
+ED$^2$P    & 0:0:0:100:0 & 2.90184 & 4/2/1 & Delay benefit dominates energy--delay trade-off. \\
 \bottomrule
 \end{tabularx}
-\caption{Part B Task 3 -- objective comparison.}
+\caption{Part B Task 3 -- objective comparison (weight order: delay, dynamic energy, leakage, cycle time, area).}
 \end{table}
 
-Pure delay and ED$^2$ both select the 4/2/1 organization, while pure area selects 2/2/1. The reason is intuitive: subdividing the array into more mats (higher Ndwl) shortens wordline segments and reduces their RC delay, directly lowering access time. However, each subdivision adds its own decoder, sense amplifier, and driver circuitry, increasing total area. When the optimizer targets area, it prefers fewer subdivisions (2/2/1) to minimize this peripheral overhead, accepting a 16\% access-time penalty (3.35\,ns vs.\ 2.89\,ns). The fact that ED$^2$ agrees with pure delay indicates that at this capacity and technology node, the delay reduction from additional parallelism more than compensates for the modest energy increase from extra peripheral logic.
+Pure delay and ED$^2$P both select 4/2/1; pure area selects 2/2/1 with a 16\% access-time penalty. ED$^2$P agreeing with pure delay confirms delay reduction outweighs extra peripheral energy at this node.
 
 \subsection*{Task 4: Bitline Delay Check}
 
-CACTI reports a bitline delay component of 0.4069\,ns. The lecture RC formula ($t = 0.69 \cdot R_{BL} \cdot C_{BL}$, using the full bitline resistance and capacitance) yields 18.7\,ns -- a $46\times$ overestimate. This dramatic discrepancy arises because the hand model treats the read as a full-swing passive RC discharge from $V_{DD}$ to ground, whereas the actual SRAM read is a \emph{partial-swing} operation terminated early by a sense amplifier. The sense amplifier fires as soon as the bitline differential exceeds its input-referred offset (typically 25--50\,mV), so the bitline only needs to swing a small fraction of $V_{DD}$. Additionally, CACTI accounts for the hierarchical bitline architecture (local and global bitlines with intermediate sense amplifiers), which keeps the effective RC product per segment much smaller than the full-column value. The capacity sweep corroborates this: as capacity grows, wire length and H-tree loading become increasingly dominant, which the simple RC model cannot capture since it ignores the hierarchical organization entirely.
+CACTI reports a bitline delay of 0.4069\,ns; the lecture RC formula yields 18.7\,ns ($46\times$ overestimate). The discrepancy arises because the hand model assumes full-swing passive RC discharge, whereas the actual read is partial-swing (25--50\,mV) terminated early by the sense amplifier, and CACTI uses hierarchical bitline segments.
 
 %% ========================================================================
 \section*{Part C -- NVSim: 2\,MB STT-MRAM vs SRAM}
@@ -213,7 +184,7 @@ CACTI reports a bitline delay component of 0.4069\,ns. The lecture RC formula ($
 \toprule
 \textbf{Metric} & \textbf{SRAM (CACTI)} & \textbf{STT-MRAM (NVSim)} & \textbf{Ratio} \\
 \midrule
-Area                & 11.474\,mm$^2$ & 3.590\,mm$^2$  & $0.31\times$ ($-68.7\%$) \\
+Area                & 11.474\,mm$^2$ & 3.590\,mm$^2$  & $0.31\times$ \\
 Read hit latency    & 2.902\,ns      & 1.591\,ns      & $0.55\times$ \\
 Write latency       & 2.902\,ns      & 10.608\,ns     & $3.66\times$ \\
 Read energy         & 0.793\,nJ      & 0.763\,nJ      & $0.96\times$ \\
@@ -221,14 +192,12 @@ Write energy        & 0.851\,nJ      & 0.435\,nJ      & $0.51\times$ \\
 Leakage power       & 562.6\,mW$^\dagger$ & 425\,mW     & $0.76\times$ \\
 \bottomrule
 \end{tabularx}
-\caption{Part C Task 1 -- SRAM (CACTI 7, ED$^2$) vs.\ STT-MRAM (NVSim) at 2\,MB, 45\,nm. $^\dagger$CACTI per-UCA value as reported; NVSim total. For NVSim-only SRAM (6.393\,mm$^2$, 0.85/0.52\,ns) ratio is $0.56\times$/$1.87\times$/$20.4\times$.}
+\caption{Part C Task 1 -- SRAM vs.\ STT-MRAM at 2\,MB, 45\,nm. $^\dagger$Cross-tool comparison (CACTI vs.\ NVSim). NVSim-internal SRAM reference: 6.393\,mm$^2$, 0.85/0.52\,ns, 3196\,mW; against that, STT-MRAM ratios are $0.56\times$ area, $1.87\times$/$20.4\times$ read/write latency, $0.13\times$ leakage.}
 \end{table}
 
 \subsection*{Task 1: SRAM--STT-MRAM Comparison}
 
-Compared against the CACTI baseline (Table~\ref{tab:partB}), STT-MRAM delivers a $0.31\times$ area footprint and $0.76\times$ leakage power at 2\,MB, with a $0.55\times$ faster read access latency (1.591\,ns vs.\ 2.902\,ns). The write-latency penalty is severe, however: 10.608\,ns vs.\ 2.902\,ns ($3.66\times$). Dynamic read energy is comparable (0.763\,nJ vs.\ 0.793\,nJ) while dynamic write energy drops to $0.51\times$ (0.435\,nJ vs.\ 0.851\,nJ). Note that NVSim's own internal SRAM model (6.393\,mm$^2$, 0.850\,ns read, 0.520\,ns write, 0.575\,nJ read energy, 0.531\,nJ write energy, 3196\,mW leakage) gives a device-level baseline that is more favorable to SRAM; against that reference the STT-MRAM ratios are $0.56\times$ area, $1.87\times$ read latency, $20.4\times$ write latency, $1.33\times$ read energy, and $0.82\times$ write energy.
-
-The area advantage stems from the 1T-1MTJ bitcell, which occupies roughly 54\,F$^2$ compared to SRAM's 146\,F$^2$ (NVSim models). The massive leakage reduction occurs because the MTJ stores data as a magnetic orientation rather than as charge on a cross-coupled latch -- there are no continuously biased transistors holding state. The read-latency advantage (against CACTI) is partly an artifact of NVSim's faster peripheral model; the sense-amp integration time for current-mode MRAM sensing is genuinely longer than voltage-mode SRAM sensing. The write-latency penalty is real and severe because STT switching requires injecting a spin-polarized current pulse of sufficient magnitude and duration (10\,ns write pulse) to overcome the MTJ thermal stability and flip the free-layer magnetization.
+STT-MRAM delivers $0.31\times$ area (1T-1MTJ at ${\sim}54$\,F$^2$ vs.\ SRAM's 146\,F$^2$) and $0.76\times$ leakage (magnetic storage needs no standby bias), but incurs a severe $3.66\times$ write penalty from spin-torque switching dynamics. These are cross-tool ratios; NVSim's own SRAM baseline confirms the expected $0.13\times$ leakage advantage.
 
 \subsection*{Task 2: Strengths and Weaknesses}
 
@@ -246,20 +215,18 @@ TMR high          & 3.580 & 1.596 & 10.657 & 0.761 & 0.433 &  425.2 \\
 Half reset current & 3.590 & 1.571 & 10.588 & 0.762 & 0.433 &  425.0 \\
 \bottomrule
 \end{tabularx}
-\caption{Part C Tasks 2, 3, and 4 -- NVSim variants at 2\,MB, 45\,nm. E denotes dynamic access energy.}
+\caption{Part C Tasks 2--4 -- NVSim variants at 2\,MB, 45\,nm.}
 \end{table}
 
-Three of the six metrics are dramatically better for STT-MRAM and three are dramatically worse. The best are \emph{area} ($0.56\times$), \emph{leakage} ($0.13\times$), and \emph{write energy} ($0.82\times$); the worst are \emph{read latency} ($1.87\times$), \emph{write latency} ($20.4\times$), and \emph{read energy} ($1.33\times$). At the device level, this is a direct consequence of the storage mechanism: SRAM stores data as charge on bistable inverters that can be read and written at transistor speeds, while STT-MRAM relies on spin-transfer torque to manipulate a magnetic tunnel junction. The current-mode sensing path for MRAM is inherently slower than voltage-mode sensing because the resistance ratio (TMR) provides a smaller signal margin, and the write path requires sustained current above the critical switching threshold for a duration set by the thermal stability requirements. Read energy is higher for MRAM because the sense amplifier must drive current through the MTJ's resistance, whereas SRAM sensing exploits passive charge sharing on pre-charged bitlines.
+Best STT-MRAM metrics: area ($0.56\times$), leakage ($0.13\times$), write energy ($0.82\times$). Worst: read latency ($1.87\times$), write latency ($20.4\times$), read energy ($1.33\times$).
 
 \subsection*{Task 3: TMR Sensitivity}
 
-Raising the tunnel magnetoresistance ratio from 2:1 (R$_\text{AP}$/R$_\text{P}$ = 3k$\Omega$/6k$\Omega$) to 3:1 (4k$\Omega$/12k$\Omega$) produces negligible changes in array-level metrics: the largest shift is write latency at only +0.46\%. This is because TMR primarily affects the \emph{signal margin} available to the sense amplifier -- a higher TMR means a larger resistance difference between the ``0'' and ``1'' states, which improves the bit-error rate (BER) and allows more robust sensing. However, it does not fundamentally change the speed of either the sensing circuit (which is dominated by the amplifier's bandwidth and the bitline RC) or the write operation (which is governed by the spin-torque switching dynamics, independent of TMR). In practice, the benefit of higher TMR manifests as improved yield and reliability at the array level, not as a performance improvement -- an important distinction for MRAM technology scaling.
+Raising TMR from 2:1 to 3:1 produces negligible array-level changes (largest: write latency +0.46\%). TMR improves sense-amp signal margin and yield, not speed -- an important distinction for MRAM scaling.
 
 \subsection*{Task 4: Write-Current Sensitivity}
 
-Halving the reset current from 200\,$\mu$A to 100\,$\mu$A does not change the cell area in NVSim because the MTJ's physical footprint (54\,F$^2$) dominates the total cell area, not the access transistor. The access transistor must be large enough to source the switching current, but at 200\,$\mu$A the transistor is already smaller than the MTJ pillar and its surrounding keep-out zones. Reducing the current to 100\,$\mu$A would allow a smaller transistor, but since the cell layout is MTJ-area-limited rather than transistor-limited, NVSim reports no area change. In a hypothetical design where the transistor were the area-limiting element (e.g., at a more advanced technology node with a smaller MTJ), halving the write current would enable a proportionally smaller transistor and a measurable area reduction. The read latency drops from 1.591\,ns to 1.571\,ns ($-$1.3\%) while write energy drops from 0.435\,nJ to 0.433\,nJ ($-$0.5\%), reflecting the lower $I \cdot t$ product needed for switching. Area and leakage remain unchanged (54\,F$^2$, 425\,mW).
-
-The quantitative trade-off is clear: against the NVSim SRAM reference, STT-MRAM reduces area by 43.8\% and leakage by 86.7\%, but read latency increases by 87.2\% and write latency by $20.4\times$. The write-energy reduction is only 18.1\%. Against the CACTI Part~B baseline, STT-MRAM instead delivers faster read access (1.591\,ns vs.\ 2.902\,ns) and lower write energy (0.435\,nJ vs.\ 0.851\,nJ) at the cost of write latency. The primary advantage of STT-MRAM is therefore density and standby power -- it enables a much larger cache in the same die area, which becomes the key lever exploited in Part~E.
+Halving reset current (200$\rightarrow$100\,$\mu$A) does not change cell area (MTJ footprint dominates at 54\,F$^2$). Read latency drops $-$1.3\% and write energy $-$0.5\%. The primary STT-MRAM advantage is density and standby power, enabling ${\sim}4\times$ more capacity in the same area -- the key lever in Part~E.
 
 %% ========================================================================
 \section*{Part D -- Ramulator 2: DDR4 Miss Stream}
@@ -280,12 +247,12 @@ ChRaBaRoCo             & 78\,845 & 1844.21 & 55.9\% & Row locality destroyed \\
 2 channels             & 4\,889  & 233.57  & 32.7\% & Best throughput \\
 \bottomrule
 \end{tabularx}
-\caption{Part D Task 1 -- scheduler, address-mapping, and channel comparison.}
+\caption{Part D -- scheduler, address-mapping, and channel comparison (2\,048-request trace).}
 \end{table}
 
 \subsection*{Task 1: Baseline Scheduler and Mapping}
 
-With the First-Ready First-Come-First-Served (FRFCFS) scheduler and the RoBaRaCoCh address mapping, Ramulator~2 completes the trace in 9\,594 cycles with an average read latency of 262.93 cycles and a 53.9\% row-buffer hit rate. FRFCFS achieves this by prioritizing requests that hit an already-open row (``first-ready'') over older requests that would require a precharge--activate sequence, effectively reordering the request stream to exploit spatial locality within DRAM rows. The RoBaRaCoCh mapping places row bits in the most significant address positions, which means consecutive cache-line addresses map to different columns within the same row, maximizing row-buffer hits for sequential access patterns.
+With FRFCFS and RoBaRaCoCh the trace completes in 9\,594 cycles (262.93 avg read latency, 53.9\% row-hit rate). FRFCFS prioritizes row-buffer hits, and RoBaRaCoCh maps consecutive addresses to columns within the same row.
 
 \begin{table}[H]
 \centering
@@ -300,27 +267,27 @@ ChRaBaRoCo          & 78\,845 & 1844.21 & 1\,121 &   7 & 878 & 55.9\% \\
 2 channels          & 4\,889  & 233.57  &   326  & 143 & 528 & 32.7\% \\
 \bottomrule
 \end{tabularx}
-\caption{Part D -- row-buffer and throughput breakdown across configurations.}
+\caption{Part D -- row-buffer breakdown across configurations.}
 \end{table}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.48\textwidth]{../ramulator2/plots/cycles_bar.png}
-\includegraphics[width=0.48\textwidth]{../ramulator2/plots/row_pie.png}
-\caption{Part D -- total memory cycles across configurations (left); row hit/miss/conflict split for baseline FRFCFS + RoBaRaCoCh (right).}
+\includegraphics[width=0.46\textwidth]{../ramulator2/plots/cycles_bar.png}
+\includegraphics[width=0.46\textwidth]{../ramulator2/plots/row_pie.png}
+\caption{Total memory cycles (left); row hit/miss/conflict split for baseline (right).}
 \end{figure}
 
 \subsection*{Task 2: Scheduler Comparison}
 
-The FCFS-proxy configuration (buffer depth = 1, no refresh) is not a true FCFS scheduler but a serializing proxy that processes one request at a time without reordering. Despite achieving a higher row-hit rate (69.6\%) -- because it processes requests in their original sequential order, which happens to have good spatial locality -- total execution time balloons to 42\,937 cycles ($4.5\times$ worse). This counterintuitive result demonstrates that reordering and parallelism are more important than raw row-hit rate: FRFCFS can overlap precharge--activate sequences for one bank with data transfers on another, hiding latency through bank-level parallelism. The serializing proxy eliminates this overlap, turning every DRAM timing constraint into a sequential stall. The lower per-request latency (61.90 cycles) is an artifact of the simplified model, not a genuine advantage.
+The FCFS-proxy achieves higher row-hit rate (69.6\%) but $4.5\times$ worse throughput (42\,937 cycles), demonstrating that bank-level parallelism and request reordering matter more than raw hit rate.
 
 \subsection*{Task 3: Address Mapping}
 
-Switching to ChRaBaRoCo mapping is catastrophic: cycles jump to 78\,845 and average read latency to 1844.21 cycles. In this mapping, the row bits are placed below the bank bits in the address decomposition, which means that consecutive addresses map to \emph{different rows within the same bank}. Each successive access therefore triggers a row-buffer conflict -- requiring a precharge of the current row, activation of the new row, and then the column access -- rather than a row-buffer hit. The row-hit rate only marginally increases to 55.9\% (from 53.9\%) because a few accesses still happen to land in the same row, but the conflict count rises from 707 to 878, and the near-elimination of misses (down to 7) means almost every non-hit access is a costly conflict rather than a cold miss. This result underscores why address mapping is one of the most impactful microarchitectural decisions in memory controller design. Note: the trace used here (\texttt{l2miss\_converted.trace}, 2048 requests) is smaller than the 2.2\,M-request trace in the reference report (generated from gem5's CommMonitor), so the absolute cycle counts differ but the relative trends across configurations are comparable.
+ChRaBaRoCo is catastrophic (78\,845 cycles): placing row bits below bank bits maps consecutive addresses to different rows in the same bank, converting most accesses to costly conflicts (878 vs.\ 707 baseline).
 
 \subsection*{Task 4: Channels and Timing Sensitivity}
 
-Adding a second channel cuts total cycles nearly in half to 4\,889, the best throughput of all configurations. The row-hit rate drops to 32.7\% because the address interleaving across channels splits spatially local requests between two independent controllers, reducing the per-channel row-buffer locality. However, the throughput gain from parallel channel operation more than compensates: two channels can service two independent requests simultaneously, and the bank-level parallelism within each channel is preserved.
+A second channel cuts cycles nearly in half (4\,889) despite lower row-hit rate (32.7\%).
 
 \begin{table}[H]
 \centering
@@ -339,7 +306,7 @@ tCCD: 4 $\rightarrow$ 8    & 12\,203 & 322.1 & +27.2\% \\
 \caption{Part D Task 4 -- timing-sensitivity experiment.}
 \end{table}
 
-The timing-sensitivity experiment reveals that tCCD (column-to-column delay) is the binding constraint for this trace: doubling it from 4 to 8 cycles increases total execution time by 27.2\% and average read latency by 22.5\%, far exceeding the impact of doubling tRCD (+9.8\%), tRP (+10.7\%), or tRAS (+4.3\%). This is because the trace has substantial row-buffer locality (53.9\% hit rate), meaning that many consecutive accesses hit the same open row and are gated only by tCCD -- the minimum spacing between successive column commands. Doubling tCCD therefore directly throttles the sustained throughput for these hit sequences. In contrast, tRAS has the smallest impact because it constrains the minimum row-open time, which is rarely the bottleneck when rows are kept open for multiple column accesses.
+tCCD is the binding constraint (+27.2\%), far exceeding tRCD/tRP/tRAS, because the 53.9\% hit rate means many accesses are gated only by column-to-column spacing within an open row.
 
 %% ========================================================================
 \section*{Part E -- gem5: Whole-Program Simulation}
@@ -347,7 +314,7 @@ The timing-sensitivity experiment reveals that tCCD (column-to-column delay) is 
 
 \textit{Central question: does the program you care about actually run faster with STT-MRAM?}
 
-Part B gives the SRAM configuration a 7-cycle L2 hit latency (derived from the 2.90\,ns CACTI access time at a ${\sim}2$\,GHz clock), while Part~C shows that the same die area occupied by 2\,MB of SRAM can hold ${\sim}8$\,MB of STT-MRAM, with a 14-cycle hit latency (from the 1.591\,ns NVSim read latency, accounting for the $2\times$ slower access). The gem5 runs therefore compare 2\,MB / 7-cycle SRAM against 8\,MB / 14-cycle STT-MRAM at graph scale \texttt{-g\,14}, using the O3CPU with fast-forward warm-up. A second sweep at \texttt{-g\,10} with TimingSimpleCPU (small working set, both caches fit) is reported alongside to show the verdict flip with scale. The assignment's suggested \texttt{-g\,18} was not re-run (O3 detailed sim cost); its expected outcome is discussed as a prediction in Task~4, not a measurement.
+Part B gives SRAM a 7-cycle L2 hit latency (2.90\,ns at ${\sim}2$\,GHz); Part~C shows the same die area holds ${\sim}8$\,MB of STT-MRAM at 14-cycle hit latency. gem5 compares 2\,MB/7-cycle SRAM vs.\ 8\,MB/14-cycle STT-MRAM at \texttt{-g\,14} (O3CPU) and \texttt{-g\,10} (TimingSimpleCPU).
 
 \begin{table}[H]
 \centering
@@ -362,27 +329,13 @@ sssp\,/\,SRAM (2\,MB, 7\,cyc)  & 0.3158 & 31.46\% & 0.54299 & 342\,904\,674 \\
 sssp\,/\,MRAM (8\,MB, 14\,cyc) & 0.3313 & 9.50\%  & 0.51754 & 342\,904\,674 \\
 \bottomrule
 \end{tabularx}
-\caption{Part E Task 1 -- gem5 comparison using identical instruction streams.}
+\caption{Part E Task 1 -- gem5 O3CPU comparison at \texttt{-g\,14}.}
 \label{tab:partE}
 \end{table}
 
 \subsection*{Task 1: Whole-Program Comparison}
 
-STT-MRAM wins on both kernels. For bfs, the speedup is $1.017\times$ (1.7\%); for sssp, it is $1.049\times$ (4.9\%). Since the instruction stream is identical between configurations (same binary, same inputs), the performance difference comes entirely from the L2 cache behavior. The larger MRAM cache captures a significantly larger fraction of the working set, reducing the L2 miss rate from 16.64\% to 7.78\% for bfs and from 31.46\% to 9.50\% for sssp. Each avoided L2 miss saves a full DRAM access (${\sim}100$+ cycles), while each L2 hit only costs an extra 7 cycles ($14-7$) compared to the SRAM configuration. The net effect is positive because the miss-rate reduction converts many expensive DRAM accesses into cheaper (albeit slower) L2 hits.
-
-\begin{table}[H]
-\centering
-\footnotesize
-\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X X}
-\toprule
-\textbf{Kernel} & \textbf{Speedup} & \textbf{IPC change} & \textbf{Miss-rate change} & \textbf{Reason} \\
-\midrule
-bfs  & $1.017\times$ & +1.7\% & 16.64\% $\rightarrow$ 7.78\%  & Moderate locality benefit \\
-sssp & $1.049\times$ & +4.9\% & 31.46\% $\rightarrow$ 9.50\%  & Large capacity offsets slower hit \\
-\bottomrule
-\end{tabularx}
-\caption{Part E -- derived comparison. Speedup $>1$ means MRAM is faster.}
-\end{table}
+STT-MRAM wins on both kernels (bfs $1.017\times$, sssp $1.049\times$). Miss rates drop substantially (16.64\%$\rightarrow$7.78\% bfs, 31.46\%$\rightarrow$9.50\% sssp); each avoided miss saves ${\sim}100$+ DRAM cycles vs.\ only 7 extra cycles per hit.
 
 \begin{table}[H]
 \centering
@@ -395,16 +348,16 @@ bfs  & 0.020957 & 0.020972 & 27.85\% $\rightarrow$ 27.85\% & SRAM (+0.07\%) \\
 sssp & 0.027119 & 0.027146 & 25.11\% $\rightarrow$ 25.11\% & SRAM (+0.10\%) \\
 \bottomrule
 \end{tabularx}
-\caption{Part E -- scale sensitivity at \texttt{-g\,10} (TimingSimpleCPU). Identical hits/misses across 2\,MB and 8\,MB: working set fits, capacity buys nothing, latency decides.}
+\caption{Part E -- scale sensitivity at \texttt{-g\,10}: working set fits in both caches, so capacity buys nothing and latency decides.}
 \end{table}
 
 \subsection*{Task 2: Kernel Sensitivity}
 
-The sssp kernel benefits nearly $3\times$ more than bfs ($4.9\%$ vs.\ $1.7\%$) because it has fundamentally worse cache locality. With the 2\,MB SRAM, sssp suffers a 31.46\% L2 miss rate compared to bfs's 16.64\%. This means sssp's working set significantly overflows the 2\,MB cache, generating many more expensive DRAM accesses. When the cache is expanded to 8\,MB via MRAM, sssp captures a much larger fraction of its working set (miss rate drops to 9.50\%), converting many DRAM accesses to L2 hits. For bfs, the working set already partially fits in 2\,MB, so the additional capacity provides diminishing returns. This result illustrates a general principle: cache-capacity upgrades benefit workloads with poor locality more than those that are already well-served by the existing cache size.
+sssp benefits ${\sim}3\times$ more (4.9\% vs.\ 1.7\%) because its 2\,MB miss rate (31.46\%) is much higher than bfs (16.64\%), so the extra capacity captures proportionally more of its working set.
 
 \subsection*{Task 3: CPU-Model Effect}
 
-The choice of CPU model materially affects how the SRAM--MRAM trade-off appears. A TimingSimpleCPU processes instructions strictly in order, so every L2 access stalls the entire pipeline until the data arrives -- making memory latency directly visible in execution time. The O3CPU (out-of-order) can overlap independent memory accesses with useful computation by issuing non-dependent instructions while cache misses are in flight. This means the O3 model partially hides the $2\times$ longer MRAM hit latency by finding other work to do during the extra 7 cycles per L2 hit. Conversely, a TimingSimpleCPU would show the capacity benefit of MRAM more starkly because every avoided miss translates directly to saved stall cycles without any overlap. The implication is that the measured MRAM advantage (1.7--4.9\%) is a conservative estimate for in-order cores and an optimistic one for aggressively out-of-order cores.
+The O3CPU partially hides MRAM's $2\times$ hit-latency penalty by overlapping independent work during stalls. A TimingSimpleCPU exposes every stall directly, making the measured 1.7--4.9\% MRAM advantage conservative for in-order cores.
 
 \subsection*{Task 4: Final System Choice}
 
@@ -415,28 +368,20 @@ The choice of CPU model materially affects how the SRAM--MRAM trade-off appears.
 \toprule
 \textbf{Task} & \textbf{Result} & \textbf{Reasoning} \\
 \midrule
-2 & MRAM wins for both kernels at \texttt{-g\,14}; sssp benefits more. & Workloads with poorer locality gain more from capacity than they lose from slower hit latency. \\[0.3em]
-3 & O3 hides part of cache-stall cost. & TimingSimpleCPU exposes stalls directly; O3 overlaps independent work, reducing the visible effect of slower hits. \\[0.3em]
-4 & Measured: MRAM wins at \texttt{-g\,14}, SRAM wins at \texttt{-g\,10}; predicted: SRAM wins at \texttt{-g\,18}. & Verdict flips with working set: below 2\,MB latency decides (SRAM +0.1\% measured); at \texttt{-g\,14} capacity decides (MRAM +1.7--4.9\% measured); beyond 8\,MB both miss alike so latency should decide again (prediction, not run). \\
+2 & MRAM wins at \texttt{-g\,14}; sssp benefits more. & Poorer locality gains more from capacity. \\[0.2em]
+3 & O3 hides part of cache-stall cost. & In-order core exposes stalls directly. \\[0.2em]
+4 & MRAM wins at \texttt{-g\,14}, SRAM at \texttt{-g\,10}; predicted SRAM at \texttt{-g\,18}. & Below 2\,MB latency decides; at 2--8\,MB capacity decides; beyond 8\,MB both miss alike. \\
 \bottomrule
 \end{tabularx}
 \caption{Part E Tasks 2--4 -- interpretation summary.}
 \end{table}
 
-The simulation chain points to STT-MRAM as the preferred L2 technology for this specific workload and configuration at \texttt{-g\,14}: Part~C establishes that the same die area yields $4\times$ the capacity, Part~D characterizes the DRAM backend that penalizes every L2 miss, and Part~E shows that the larger cache's miss-rate reduction ($-53\%$ for bfs, $-70\%$ for sssp) outweighs the $2\times$ hit-latency penalty on both kernels. However, three legitimate reviewer attack points remain: (i)~the $4\times$ capacity ratio assumes the full SRAM area converts to MRAM at NVSim's density, which may be optimistic if peripheral circuitry does not scale; (ii)~the O3 CPU model hides some of the hit-latency cost, so a simpler core would change the balance; (iii)~graph scale \texttt{-g\,18} was not run; by the measured trend (identical miss rates at \texttt{-g\,10}, halved miss at \texttt{-g\,14}), a larger working set overflowing both caches would equalize miss rates and let the $2\times$ hit-latency penalty dominate, reversing the outcome. This prediction -- not a measurement -- is the most important caveat: the MRAM advantage is scale-dependent.
-
-The cross-part logic is internally consistent at \texttt{-g\,14}. CACTI supplies the 2\,MB SRAM hit baseline (2.902\,ns access), NVSim supplies the density--latency trade-off (3.59\,mm$^2$, 1.591\,ns), Ramulator characterizes the DRAM penalty for misses (9\,594 cycles baseline on the 2048-request trace), and gem5 applies these numbers to identical instruction streams. At \texttt{-g\,14}, MRAM's capacity benefit outweighs its latency penalty; at \texttt{-g\,10}, the reverse holds (measured).
+STT-MRAM is preferred at \texttt{-g\,14}: the miss-rate reduction ($-53\%$ bfs, $-70\%$ sssp) outweighs the $2\times$ hit-latency penalty. Caveats: (i)~the $4\times$ capacity ratio may be optimistic if peripherals do not scale; (ii)~\texttt{-g\,18} was not run -- overflowing both caches would equalize miss rates, letting the latency penalty dominate. The MRAM advantage is scale-dependent.
 
 %% ========================================================================
 \section*{Conclusion}
 %% ========================================================================
 
-SRAM remains the superior bitcell in isolation -- it is faster, lower-energy per access, and simpler to integrate. However, at the system level, STT-MRAM wins when its density advantage (${\sim}4\times$ more capacity per unit area) translates into a large miss-rate reduction, i.e.\ when the working set fits in 8\,MB but not in 2\,MB (\texttt{-g\,14}: MRAM +1.7--4.9\%). When the set fits in both (\texttt{-g\,10}) or overflows both (predicted \texttt{-g\,18}), SRAM's $2\times$ faster hits win. The main bottlenecks that determine which technology ``wins'' are cache locality of the target workload (which determines whether the capacity advantage translates to miss-rate reduction), the graph scale \texttt{-g} parameter, the DRAM row policy and address mapping (which set the cost of each miss), and the CPU model's ability to hide memory-access latency. Device-level speed alone does not decide the answer; the system context is what tilts the balance.
-
-%% ========================================================================
-\section*{Code Availability}
-%% ========================================================================
-
-All simulation configs, scripts, and plotting code for Parts A--E are available at \url{https://github.com/DevAbhinav-23/AMCAS_Assignments}.
+SRAM is faster per-access, but STT-MRAM wins at the system level when its ${\sim}4\times$ density converts to large miss-rate reduction (\texttt{-g\,14}: +1.7--4.9\%). When the working set fits both caches (\texttt{-g\,10}) or overflows both (predicted \texttt{-g\,18}), SRAM's $2\times$ faster hits win. Device speed alone does not decide; workload locality, DRAM policy, and CPU model tilt the balance. Code: \url{https://github.com/DevAbhinav-23/AMCAS_Assignments}.
 
 \end{document}
